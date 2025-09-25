@@ -7,8 +7,8 @@
 /**
  * Class Bookshelf
  * Implements idea of arranging books into a bookshelf.
- * Books on a bookshelf can only be accessed in a specific way so books don’t fall down;
- * You can add or remove a book only when it’s on one of the ends of the shelf.   
+ * Books on a bookshelf can only be accessed in a specific way so books don't fall down;
+ * You can add or remove a book only when it's on one of the ends of the shelf.   
  * However, you can look at any book on a shelf by giving its location (starting at 0).
  * Books are identified only by their height; two books of the same height can be
  * thought of as two copies of the same book.
@@ -115,7 +115,7 @@ public class Bookshelf {
    /**
     * Returns string representation of this Bookshelf. Returns a string with the height of all
     * books on the bookshelf, in the order they are in on the bookshelf, using the format shown
-    * by example here:  “[7, 33, 5, 4, 3]”
+    * by example here:  "[7, 33, 5, 4, 3]"
     */
    public String toString() {
       assert isValidBookshelf();

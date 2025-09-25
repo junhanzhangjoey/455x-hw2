@@ -160,7 +160,7 @@ public class BookshelfKeeper {
     * by the number of bookshelf mutator calls made to perform the last pick or put operation, 
     * followed by the total number of such calls made since we created this BookshelfKeeper.
     * 
-    * Example return string showing required format: “[1, 3, 5, 7, 33] 4 10”
+    * Example return string showing required format: "[1, 3, 5, 7, 33] 4 10"
     * 
     */
    public String toString() {
