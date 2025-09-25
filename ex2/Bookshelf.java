@@ -17,24 +17,25 @@
 import java.util.ArrayList;
 
 public class Bookshelf {
+   private ArrayList<Integer> pileOfBooks;
 
    /**
       Representation invariant:
-      1. The ArrayList instance variable pileOfBooks can not be null.
-      2. All elements in pileOfBooks has to be greater than 0, representing book height
-      
+
+      <put rep. invar. comment here>
 
    */
    
-   private ArrayList<Integer> pileOfBooks;
+   // <add instance variables here>
 
 
    /**
     * Creates an empty Bookshelf object i.e. with no books
     */
    public Bookshelf() {
-      this.pileOfBooks = new ArrayList<Integer>();
+      
       assert isValidBookshelf();  // sample assert statement (you will be adding more of these calls)
+      this.pileOfBooks = new ArrayList<Integer>();
    }
 
    /**
@@ -46,7 +47,6 @@ public class Bookshelf {
     */
    public Bookshelf(ArrayList<Integer> pileOfBooks) {
       this.pileOfBooks = new ArrayList<Integer>(pileOfBooks);
-      assert isValidBookshelf();
    }
 
    /**
@@ -56,9 +56,7 @@ public class Bookshelf {
     * PRE: height > 0 (height of book is always positive)
     */
    public void addFront(int height) {
-      assert isValidBookshelf();
       this.pileOfBooks.add(0,height);
-      assert isValidBookshelf();
    }
 
    /**
@@ -67,9 +65,7 @@ public class Bookshelf {
     * PRE: height > 0 (height of book is always positive)
     */
    public void addLast(int height) {
-      assert isValidBookshelf();
       this.pileOfBooks.add(height);
-      assert isValidBookshelf();
    }
 
    /**
@@ -79,7 +75,6 @@ public class Bookshelf {
     * PRE: this.size() > 0 i.e. can be called only on non-empty BookShelf
     */
    public int removeFront() {
-      assert isValidBookshelf();
       return this.pileOfBooks.remove(0);
    }
 
@@ -90,7 +85,6 @@ public class Bookshelf {
     * PRE: this.size() > 0 i.e. can be called only on non-empty BookShelf
     */
    public int removeLast() {
-      assert isValidBookshelf();
       return this.pileOfBooks.remove(this.pileOfBooks.size() - 1);    
    }
 
@@ -100,16 +94,18 @@ public class Bookshelf {
     * PRE: 0 <= position < this.size()
     */
    public int getHeight(int position) {
-      assert isValidBookshelf();
+      
       return this.pileOfBooks.get(position);
+      
    }
 
    /**
     * Returns number of books on the this Bookshelf.
     */
    public int size() {
-      assert isValidBookshelf();
+      
       return this.pileOfBooks.size();
+
    }
 
    /**
@@ -118,7 +114,6 @@ public class Bookshelf {
     * by example here:  “[7, 33, 5, 4, 3]”
     */
    public String toString() {
-      assert isValidBookshelf();
       StringBuilder sb = new StringBuilder();
       sb.append("[");
       for(int i = 0; i < size(); i++){
@@ -138,7 +133,6 @@ public class Bookshelf {
     * (Note: this is an accessor; it does not change the bookshelf.)
     */
    public boolean isSorted() {
-      assert isValidBookshelf();
       for(int i = 1; i < size(); i++){
          if(this.pileOfBooks.get(i) < this.pileOfBooks.get(i - 1)){
             return false;
@@ -153,15 +147,8 @@ public class Bookshelf {
     */
    private boolean isValidBookshelf() {
       
-      if(this.pileOfBooks == null){
-         return false;
-      }
-      for(int height : this.pileOfBooks){
-         if(height <= 0){
-            return false;
-         }
-      }
-      return true;
+      return false;  // dummy code to get stub to compile
+
    }
 
 }

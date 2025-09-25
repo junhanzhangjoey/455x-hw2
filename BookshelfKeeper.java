@@ -12,8 +12,12 @@
  * or removed from one of the two *ends* of the bookshelf to complete a higher level pick or put 
  * operation.  Pick or put operations are performed with minimum number of such adds or removes.
  */
-public class BookshelfKeeper {
+import java.util.ArrayList;
 
+public class BookshelfKeeper {
+   private Bookshelf shelf;
+   private int totalOperations;
+   private int lastPickOrPutOperations;
    /**
       Representation invariant:
 
@@ -28,7 +32,7 @@ public class BookshelfKeeper {
     * Creates a BookShelfKeeper object with an empty bookshelf
     */
    public BookshelfKeeper() {
-
+      shelf = new Bookshelf();
    }
 
    /**
@@ -38,7 +42,7 @@ public class BookshelfKeeper {
     * PRE: sortedBookshelf.isSorted() is true.
     */
    public BookshelfKeeper(Bookshelf sortedBookshelf) {
-
+      shelf = sortedBookshelf;
    }
 
    /**
@@ -51,8 +55,39 @@ public class BookshelfKeeper {
     * PRE: 0 <= position < getNumBooks()
     */
    public int pickPos(int position) {
-
-      return 0;   // dummy code to get stub to compile
+      int size = this.getNumBooks();
+      int left = position;
+      int right = size - position - 1;
+      int count = 0;
+      ArrayList<Integer> temp = new ArrayList<Integer>();
+      if(left <= right){
+         for(int i = 0; i <= position; i++){
+            if(i == position){
+               this.shelf.removeFront();
+               break;
+            }
+            temp.add(this.shelf.removeFront());
+         }
+         for(int i = temp.size() - 1; i >= 0; i--){
+            this.shelf.addFront(temp.get(i));
+         }
+         count = 2 * left + 1;
+      }else{
+         for(int i = size - 1; i >= position; i--){
+            if(i == position){
+               this.shelf.removeLast();
+               break;
+            }
+            temp.add(this.shelf.removeLast());
+         }
+         for(int i = temp.size() - 1; i >= 0; i--){
+            this.shelf.addLast(temp.get(i));
+         }
+         count = 2 * right + 1;
+      }
+      this.totalOperations += count;
+      lastPickOrPutOperations = count;
+      return count;
    }
 
    /**
@@ -64,9 +99,41 @@ public class BookshelfKeeper {
     * 
     * PRE: height > 0
     */
-   public int putHeight(int height) {
-
-      return 0;   // dummy code to get stub to compile
+   public int putHeight(int height){
+      int loc = 0;
+      int size = this.shelf.size();
+      int count = 0;
+      while((loc < size) && this.shelf.getHeight(loc) < height){
+         loc++;
+      }
+      if(loc < size && height == this.shelf.getHeight(loc)){
+         return 0;
+      }
+      int left = loc;
+      int right = size - loc - 1;
+      ArrayList<Integer> temp = new ArrayList<Integer>();
+      if(left <= right){
+         for(int i = 0; i < loc; i++){
+            temp.add(this.shelf.removeFront());
+         }
+         this.shelf.addFront(height);
+         for(int i = temp.size() - 1; i >= 0; i--){
+            this.shelf.addFront(temp.get(i));
+         }
+         count = 2 * left + 1;
+      }else{
+         for(int i = size - 1; i >= loc; i--){
+            temp.add(this.shelf.removeLast());
+         }
+         this.shelf.addLast(height);
+         for(int i = temp.size() - 1; i >= 0; i--){
+            this.shelf.addLast(temp.get(i));
+         }
+         count = 2 * right + 3;
+      }
+      this.totalOperations += count;
+      lastPickOrPutOperations = count;
+      return count;
    }
 
    /**
@@ -76,7 +143,7 @@ public class BookshelfKeeper {
     */
    public int getTotalOperations() {
       
-       return 0;   // dummy code to get stub to compile
+       return totalOperations;
    }
 
    /**
@@ -84,7 +151,7 @@ public class BookshelfKeeper {
     */
    public int getNumBooks() {
       
-       return 0;   // dummy code to get stub to compile
+       return this.shelf.size();
    }
 
    /**
@@ -98,8 +165,19 @@ public class BookshelfKeeper {
     */
    public String toString() {
       
-      return "";   // dummy code to get stub to compile
-      
+      StringBuilder sb = new StringBuilder();
+      sb.append("[");
+      for(int i = 0; i < getNumBooks(); i++){
+         sb.append(this.shelf.getHeight(i));
+         if(i != getNumBooks() - 1){
+            sb.append(", ");
+         }
+      }
+      sb.append("] ");
+      sb.append(lastPickOrPutOperations);
+      sb.append(" ");
+      sb.append(totalOperations);
+      return sb.toString();
    }
 
    /**
