@@ -15,17 +15,18 @@
 import java.util.ArrayList;
 
 public class BookshelfKeeper {
-   private Bookshelf shelf;
-   private int totalOperations;
-   private int lastPickOrPutOperations;
    /**
       Representation invariant:
-
-      <put rep. invar. comment here>
-
+      1. shelf can not be null
+      2. totalOperations has to be greater than 0;
+      3. lastPickOrPutOperations has to be greater than 0;
+      4. totalOperations has to be greater or equal than lastPickOrPutOperations
    */
    
    // <add instance variables here>
+   private Bookshelf shelf;
+   private int totalOperations;
+   private int lastPickOrPutOperations;
 
 
    /**
@@ -33,6 +34,9 @@ public class BookshelfKeeper {
     */
    public BookshelfKeeper() {
       shelf = new Bookshelf();
+      totalOperations = 0;
+      lastPickOrPutOperations = 0;
+      isValidBookshelfKeeper();
    }
 
    /**
@@ -43,6 +47,7 @@ public class BookshelfKeeper {
     */
    public BookshelfKeeper(Bookshelf sortedBookshelf) {
       shelf = sortedBookshelf;
+      isValidBookshelfKeeper();
    }
 
    /**
@@ -55,6 +60,7 @@ public class BookshelfKeeper {
     * PRE: 0 <= position < getNumBooks()
     */
    public int pickPos(int position) {
+      isValidBookshelfKeeper();
       int size = this.getNumBooks();
       int left = position;
       int right = size - position - 1;
@@ -87,6 +93,7 @@ public class BookshelfKeeper {
       }
       this.totalOperations += count;
       lastPickOrPutOperations = count;
+      isValidBookshelfKeeper();
       return count;
    }
 
@@ -100,6 +107,7 @@ public class BookshelfKeeper {
     * PRE: height > 0
     */
    public int putHeight(int height){
+      isValidBookshelfKeeper();
       int loc = 0;
       int size = this.shelf.size();
       int count = 0;
@@ -133,6 +141,7 @@ public class BookshelfKeeper {
       }
       this.totalOperations += count;
       lastPickOrPutOperations = count;
+      isValidBookshelfKeeper();
       return count;
    }
 
@@ -142,16 +151,16 @@ public class BookshelfKeeper {
     * that have been requested up to now.
     */
    public int getTotalOperations() {
-      
-       return totalOperations;
+      isValidBookshelfKeeper();
+      return totalOperations;
    }
 
    /**
     * Returns the number of books on the contained bookshelf.
     */
    public int getNumBooks() {
-      
-       return this.shelf.size();
+      isValidBookshelfKeeper();
+      return this.shelf.size();
    }
 
    /**
@@ -164,7 +173,7 @@ public class BookshelfKeeper {
     * 
     */
    public String toString() {
-      
+      isValidBookshelfKeeper();
       StringBuilder sb = new StringBuilder();
       sb.append("[");
       for(int i = 0; i < getNumBooks(); i++){
@@ -185,12 +194,18 @@ public class BookshelfKeeper {
     * (See representation invariant comment for details.)
     */
    private boolean isValidBookshelfKeeper() {
-
-      return false;  // dummy code to get stub to compile
-
+      if(this.shelf == null || this.totalOperations < 0 || this.lastPickOrPutOperations < 0 || this.lastPickOrPutOperations > this.totalOperations){
+         return false;
+      }
+      if(!this.shelf.isSorted()) return false;
+      for(int i = 0; i < this.shelf.size(); i++){
+         if(this.shelf.getHeight(i) <= 0){
+            return false;
+         }
+      }
+      return true;
    }
 
    // add any other private methods here
-
 
 }
