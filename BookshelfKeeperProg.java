@@ -82,54 +82,51 @@ import java.util.Scanner;
  */
 public class BookshelfKeeperProg {
 
-    // 唯一一次创建 Scanner(System.in)
+    // Must create Scanner(System.in) at most once.
     private static final Scanner IN = new Scanner(System.in);
     private static final String END_COMMAND = "end";
 
-    // --- 主程序入口 ---
+    // --- Main Program Entry ---
     public static void main(String[] args) {
-        // 1. 读取并初始化 BookshelfKeeper
+        // 1. Read and initialize BookshelfKeeper
         BookshelfKeeper keeper = enterInitialBooks(IN);
 
-        // 2. 初始状态输出
+        // 2. Output initial state
         System.out.println(keeper.toString());
 
-        // 3. 进入交互式操作循环
+        // 3. Enter interactive command loop
         handleOperations(keeper, IN);
 
-        // 4. 退出程序 (必须在 main 或 helper 中调用 System.exit)
-        System.out.println("Exiting Program.");
-        // 注意：由于 System.exit(1) 在 handleOperations 中已经处理了，这里可以省略，
-        // 但如果程序运行到这里才结束，说明是正常退出，应该用 System.exit(0) 或直接结束。
-        // 为了和作业的退出信息保持一致，我们让 handleOperations 内部处理 System.exit。
+        // 4. Exiting message is handled within handleOperations or here.
+        // We will let the helper function handle the exit sequence for consistency.
     }
 
-    // --- 辅助方法 1: 读取并验证初始书架配置 ---
+    // --- Helper Method 1: Read and Validate Initial Bookshelf ---
 
     /**
-     * 读取并验证初始书架配置。如果输入不合法，打印错误并立即退出。
-     * 遵循两阶段扫描，并检查：1) 正数，2) 非递减顺序。
+     * Reads and validates the initial bookshelf configuration from the input stream.
+     * Prints an error and exits if input violates preconditions (positive, non-decreasing).
      */
     private static BookshelfKeeper enterInitialBooks(Scanner mainScanner) {
         System.out.println("Please enter initial arrangement of books followed by newline:");
 
-        // Stage 1: 读取整个输入行，作为字符串
+        // Stage 1: Read the entire line of input as a String (using newline as sentinel)
         String line = mainScanner.nextLine();
 
-        // Stage 2: 使用一个新的 Scanner 来解析这行字符串
+        // Stage 2: Use a temporary Scanner to parse the numbers from the String
         Scanner lineParser = new Scanner(line); 
         ArrayList<Integer> initialBooks = new ArrayList<>();
-        int prevHeight = 0; // 用于检查非递减顺序
+        int prevHeight = 0; // Used to check non-decreasing order
 
         while (lineParser.hasNextInt()) {
             int height = lineParser.nextInt();
 
-            // 1. 错误检查 (Run 2): 高度必须是正数
+            // Error Check (Run 2): Height must be positive
             if (height <= 0) {
                 printAndExit("ERROR: Height of a book must be positive.");
             }
             
-            // 2. 错误检查 (Run 1): 检查是否非递减顺序
+            // Error Check (Run 1): Heights must be in non-decreasing order
             if (height < prevHeight) {
                  printAndExit("ERROR: Heights must be specified in non-decreasing order.");
             }
@@ -140,64 +137,74 @@ public class BookshelfKeeperProg {
         
         lineParser.close();
         
-        // 使用防御性拷贝 (Assuming Bookshelf constructor does this)
+        // Create BookshelfKeeper object
         Bookshelf initialShelf = new Bookshelf(initialBooks);
         
         return new BookshelfKeeper(initialShelf);
     }
     
-    // --- 辅助方法 2: 处理操作循环 ---
+    // --- Helper Method 2: Handle Operations Loop ---
 
     /**
-     * 处理交互式命令循环 (pick, put, end)，包括错误检查。
+     * Handles the interactive command loop (pick, put, end), including error checking.
      */
     private static void handleOperations(BookshelfKeeper keeper, Scanner mainScanner) {
         
         System.out.println("Type pick <index> or put <height> followed by newline. Type end to exit.");
         
-        // 读取第一条命令（并清除首尾空格）
-        // 使用 hasNextLine 确保流中还有内容
-        while (mainScanner.hasNextLine()) {
-            String line = mainScanner.nextLine().trim();
+        // Read the first line of command input (or the first command from file)
+        String line = mainScanner.nextLine().trim();
 
-            if (line.isEmpty()) { continue; } // 跳过空行
-
-            // 检查退出命令
-            if (line.equals(END_COMMAND)) {
-                break; // 退出 while 循环
+        while (!line.equals(END_COMMAND)) {
+            
+            // Handle possibility of empty lines (though assignment says operations line won't be blank)
+            if (line.isEmpty()) { 
+                line = mainScanner.nextLine().trim();
+                continue; 
             }
 
-            // 使用临时的 Scanner 解析
+            // Use temporary Scanner to parse the command and argument
             Scanner parser = new Scanner(line);
             
-            // 1. 提取命令
+            // 1. Check if there is a command word
+            if (!parser.hasNext()) {
+                // If the line was just whitespace (already handled by trim() and !isEmpty()), but defensive check
+                line = mainScanner.nextLine().trim();
+                continue;
+            }
+            
             String command = parser.next();
             
-            // 2. 检查命令是否是 pick 或 put (Run 3)
+            // 2. Check for invalid command string (Run 3)
             if (!command.equals("put") && !command.equals("pick")) {
                 printAndExit("ERROR: Invalid command. Valid commands are pick, put, or end.");
             }
             
-            // 3. 提取参数 (作业保证参数是整数且存在)
+            // 3. Extract argument (Guaranteed to be present and an integer by assignment specs)
             int num = parser.nextInt(); 
             parser.close();
 
-            // 4. 执行并检查参数错误
+            // 4. Execute command and check its validity
             if (command.equals("put")) {
                 handlePutOperation(keeper, num);
             } else { // command.equals("pick")
                 handlePickOperation(keeper, num);
             }
             
-            // 5. 打印结果
+            // 5. Output result and get the next command line
             System.out.println(keeper.toString());
+            line = mainScanner.nextLine().trim();
         }
+        
+        // End of program sequence
+        System.out.println("Exiting Program.");
+        System.exit(1);
     }
     
-    // --- 辅助方法 3 & 4: 处理 Put/Pick 逻辑及错误 ---
+    // --- Helper Method 3: Put Operation Handler ---
 
     private static void handlePutOperation(BookshelfKeeper keeper, int height) {
-        // 错误检查 (Run 5): 高度必须为正数
+        // Error Check (Run 5): Height must be positive
         if (height <= 0) {
             printAndExit("ERROR: Height of a book must be positive.");
         }
@@ -205,10 +212,13 @@ public class BookshelfKeeperProg {
         keeper.putHeight(height);
     }
     
+    // --- Helper Method 4: Pick Operation Handler ---
+
     private static void handlePickOperation(BookshelfKeeper keeper, int position) {
         int numBooks = keeper.getNumBooks();
         
-        // 错误检查 (Run 4): 位置是否越界 (包括负数索引)
+        // Error Check (Run 4): Check bounds (0 <= position < size)
+        // Also checks against negative index (num < 0)
         if (position < 0 || position >= numBooks) {
             printAndExit("ERROR: Entered pick operation is invalid on this shelf.");
         }
@@ -216,10 +226,10 @@ public class BookshelfKeeperProg {
         keeper.pickPos(position);
     }
     
-    // --- 错误退出辅助方法 ---
+    // --- Error Exit Utility ---
 
     /**
-     * 打印精确的错误信息并终止程序。
+     * Prints the exact error message required by the assignment and terminates the program.
      */
     private static void printAndExit(String errorMessage) {
         System.out.println(errorMessage);
