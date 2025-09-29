@@ -114,11 +114,16 @@ public class BookshelfKeeper {
       while((loc < size) && this.shelf.getHeight(loc) < height){
          loc++;
       }
+      int loc2 = loc;
       if(loc < size && height == this.shelf.getHeight(loc)){
-         return 0;
+         while(loc2 < size && this.shelf.getHeight(loc2) == height){
+            loc2++;
+         }
       }
       int left = loc;
-      int right = size - loc - 1;
+      // int right = size - loc - 1;
+      int right = size - loc2;
+
       ArrayList<Integer> temp = new ArrayList<Integer>();
       if(left <= right){
          for(int i = 0; i < loc; i++){
@@ -130,6 +135,7 @@ public class BookshelfKeeper {
          }
          count = 2 * left + 1;
       }else{
+         loc = loc2;
          for(int i = size - 1; i >= loc; i--){
             temp.add(this.shelf.removeLast());
          }
@@ -137,7 +143,8 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addLast(temp.get(i));
          }
-         count = 2 * right + 3;
+         // count = 2 * right + 3;
+         count = 2 * right + 1;
       }
       this.totalOperations += count;
       lastPickOrPutOperations = count;
