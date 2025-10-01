@@ -1,7 +1,7 @@
-// Name: 
-// USC NetID: 
+// Name: Junhan Zhang
+// USC NetID: 9250642107
 // CSCI455 PA2
-// Spring 2025
+// Fall 2025
 
 
 /**
@@ -63,7 +63,6 @@ public class Bookshelf {
 
    /**
     * Inserts book with specified height at the end of the Bookshelf.
-    * 
     * PRE: height > 0 (height of book is always positive)
     */
    public void addLast(int height) {
@@ -75,7 +74,7 @@ public class Bookshelf {
    /**
     * Removes book at the start of the Bookshelf and returns the height of the
     * removed book.
-    * 
+    * @return the height of the book that is removed
     * PRE: this.size() > 0 i.e. can be called only on non-empty BookShelf
     */
    public int removeFront() {
@@ -86,7 +85,7 @@ public class Bookshelf {
    /**
     * Removes book at the end of the Bookshelf and returns the height of the
     * removed book.
-    * 
+    * @return the height of the book that is removed
     * PRE: this.size() > 0 i.e. can be called only on non-empty BookShelf
     */
    public int removeLast() {
@@ -94,9 +93,9 @@ public class Bookshelf {
       return this.pileOfBooks.remove(this.pileOfBooks.size() - 1);    
    }
 
-   /*
+   /**
     * Gets the height of the book at the given position.
-    * 
+    * @param position index of the book that you want to get height
     * PRE: 0 <= position < this.size()
     */
    public int getHeight(int position) {
@@ -105,7 +104,7 @@ public class Bookshelf {
    }
 
    /**
-    * Returns number of books on the this Bookshelf.
+    * @return Returns number of books on the this Bookshelf.
     */
    public int size() {
       assert isValidBookshelf();
@@ -113,7 +112,7 @@ public class Bookshelf {
    }
 
    /**
-    * Returns string representation of this Bookshelf. Returns a string with the height of all
+    * @return Returns string representation of this Bookshelf. Returns a string with the height of all
     * books on the bookshelf, in the order they are in on the bookshelf, using the format shown
     * by example here:  "[7, 33, 5, 4, 3]"
     */
@@ -134,7 +133,7 @@ public class Bookshelf {
    }
 
    /**
-    * Returns true iff the books on this Bookshelf are in non-decreasing order.
+    * @return Returns true iff the books on this Bookshelf are in non-decreasing order.
     * (Note: this is an accessor; it does not change the bookshelf.)
     */
    public boolean isSorted() {
@@ -148,7 +147,7 @@ public class Bookshelf {
    }
 
    /**
-    * Returns true iff the Bookshelf data is in a valid state.
+    * @return Returns true iff the Bookshelf data is in a valid state.
     * (See representation invariant comment for more details.)
     */
    private boolean isValidBookshelf() {

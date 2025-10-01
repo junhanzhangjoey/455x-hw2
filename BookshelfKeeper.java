@@ -1,8 +1,9 @@
-// Name: 
-// USC NetID: 
+// Name: Junhan Zhang
+// USC NetID: 9250642107
 // CSCI455 PA2
-// Spring 2025
+// Fall 2025
 
+import java.util.ArrayList;
 
 /**
  * Class BookshelfKeeper 
@@ -12,7 +13,6 @@
  * or removed from one of the two *ends* of the bookshelf to complete a higher level pick or put 
  * operation.  Pick or put operations are performed with minimum number of such adds or removes.
  */
-import java.util.ArrayList;
 
 public class BookshelfKeeper {
    /**
@@ -42,7 +42,7 @@ public class BookshelfKeeper {
    /**
     * Creates a BookshelfKeeper object initialized with the given sorted bookshelf.
     * Note: method does not make a defensive copy of the bookshelf.
-    *
+    * @param sortedBookshelf
     * PRE: sortedBookshelf.isSorted() is true.
     */
    public BookshelfKeeper(Bookshelf sortedBookshelf) {
@@ -53,8 +53,8 @@ public class BookshelfKeeper {
    /**
     * Removes a book from the specified position in the bookshelf and keeps bookshelf sorted 
     * after picking up the book.
-    * 
-    * Returns the number of calls to mutators on the contained bookshelf used to complete this
+    * @param position the position of the book to be removed
+    * @return Returns the number of calls to mutators on the contained bookshelf used to complete this
     * operation. This must be the minimum number to complete the operation.
     * 
     * PRE: 0 <= position < getNumBooks()
@@ -100,30 +100,21 @@ public class BookshelfKeeper {
    /**
     * Inserts book with specified height into the shelf.  Keeps the contained bookshelf sorted 
     * after the insertion.
-    * 
-    * Returns the number of calls to mutators on the contained bookshelf used to complete this
+    * @param height  
+    * @return Returns the number of calls to mutators on the contained bookshelf used to complete this
     * operation. This must be the minimum number to complete the operation.
     * 
     * PRE: height > 0
     */
    public int putHeight(int height){
       isValidBookshelfKeeper();
-      int loc = 0;
       int size = this.shelf.size();
-      int count = 0;
-      while((loc < size) && this.shelf.getHeight(loc) < height){
-         loc++;
-      }
-      int loc2 = loc;
-      if(loc < size && height == this.shelf.getHeight(loc)){
-         while(loc2 < size && this.shelf.getHeight(loc2) == height){
-            loc2++;
-         }
-      }
-      int left = loc;
-      // int right = size - loc - 1;
-      int right = size - loc2;
-
+      int [] bothEnd = getEndIndices(height);
+      int loc = bothEnd[0];
+      int loc2 = bothEnd[1];
+      int left = loc; //left is the number of book you need to remove on the left size 
+      int right = size - loc2;//right is the number of book you need to remove on the left size  
+      int count;// the number of the mutator called.
       ArrayList<Integer> temp = new ArrayList<Integer>();
       if(left <= right){
          for(int i = 0; i < loc; i++){
@@ -143,7 +134,6 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addLast(temp.get(i));
          }
-         // count = 2 * right + 3;
          count = 2 * right + 1;
       }
       this.totalOperations += count;
@@ -197,7 +187,7 @@ public class BookshelfKeeper {
    }
 
    /**
-    * Returns true iff the BookshelfKeeper data is in a valid state.
+    * @return Returns true iff the BookshelfKeeper data is in a valid state.
     * (See representation invariant comment for details.)
     */
    private boolean isValidBookshelfKeeper() {
@@ -215,4 +205,30 @@ public class BookshelfKeeper {
 
    // add any other private methods here
 
+   /**
+    * In the putHeight method, this helper is used to find the indices of the first and last book 
+    * with the given height. If there is no duplicate book, both indices are the same.
+    *
+    * @param height the height of the book to search for
+    * @return an array of size 2, where the first element is the leftmost index 
+    *         and the second element is the rightmost index of the book with the given height
+    */
+
+   private int[] getEndIndices(int height){
+      int [] res = new int [2];
+      int loc = 0;
+      int size = this.shelf.size();
+      while((loc < size) && this.shelf.getHeight(loc) < height){
+         loc++;
+      }
+      int loc2 = loc;
+      if(loc < size && height == this.shelf.getHeight(loc)){
+         while(loc2 < size && this.shelf.getHeight(loc2) == height){
+            loc2++;
+         }
+      }
+      res[0] = loc;
+      res[1] = loc2;
+      return res;
+   }
 }
