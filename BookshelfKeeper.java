@@ -18,9 +18,10 @@ public class BookshelfKeeper {
    /**
       Representation invariant:
       1. shelf can not be null
-      2. totalOperations has to be greater than 0;
+      2. totalOperations has to be greater than or equal to 0;
       3. lastPickOrPutOperations has to be greater than 0;
-      4. totalOperations has to be greater or equal than lastPickOrPutOperations
+      4. totalOperations has to be greater than or equal to lastPickOrPutOperations
+      5. The contained bookshelf ('shelf') must always be in non-decreasing order by height.
    */
    
    // <add instance variables here>
@@ -28,7 +29,8 @@ public class BookshelfKeeper {
    private int totalOperations;
    private int lastPickOrPutOperations;
 
-
+   private static final int MUTATORS_PER_BOOK_MOVED = 2; 
+   private static final int TARGET_BOOK_OPERATION = 1;
    /**
     * Creates a BookShelfKeeper object with an empty bookshelf
     */
@@ -60,13 +62,13 @@ public class BookshelfKeeper {
     * PRE: 0 <= position < getNumBooks()
     */
    public int pickPos(int position) {
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       int size = this.getNumBooks();
-      int left = position;
-      int right = size - position - 1;
+      int numToMoveFromFront = position;
+      int numToMoveFromBack = size - position - 1;
       int count = 0;
       ArrayList<Integer> temp = new ArrayList<Integer>();
-      if(left <= right){
+      if(numToMoveFromFront <= numToMoveFromBack){
          for(int i = 0; i <= position; i++){
             if(i == position){
                this.shelf.removeFront();
@@ -77,7 +79,7 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addFront(temp.get(i));
          }
-         count = 2 * left + 1;
+         count = MUTATORS_PER_BOOK_MOVED * numToMoveFromFront + TARGET_BOOK_OPERATION;
       }else{
          for(int i = size - 1; i >= position; i--){
             if(i == position){
@@ -89,11 +91,11 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addLast(temp.get(i));
          }
-         count = 2 * right + 1;
+         count = MUTATORS_PER_BOOK_MOVED * numToMoveFromBack + TARGET_BOOK_OPERATION;
       }
       this.totalOperations += count;
       lastPickOrPutOperations = count;
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       return count;
    }
 
@@ -107,16 +109,16 @@ public class BookshelfKeeper {
     * PRE: height > 0
     */
    public int putHeight(int height){
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       int size = this.shelf.size();
       int [] bothEnd = getEndIndices(height);
       int loc = bothEnd[0];
       int loc2 = bothEnd[1];
-      int left = loc; //left is the number of book you need to remove on the left size 
-      int right = size - loc2;//right is the number of book you need to remove on the left size  
+      int numToMoveFromFront = loc; 
+      int numToMoveFromBack = size - loc2;
       int count;// the number of the mutator called.
       ArrayList<Integer> temp = new ArrayList<Integer>();
-      if(left <= right){
+      if(numToMoveFromFront <= numToMoveFromBack){
          for(int i = 0; i < loc; i++){
             temp.add(this.shelf.removeFront());
          }
@@ -124,7 +126,7 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addFront(temp.get(i));
          }
-         count = 2 * left + 1;
+         count = MUTATORS_PER_BOOK_MOVED * numToMoveFromFront + TARGET_BOOK_OPERATION;
       }else{
          loc = loc2;
          for(int i = size - 1; i >= loc; i--){
@@ -134,11 +136,11 @@ public class BookshelfKeeper {
          for(int i = temp.size() - 1; i >= 0; i--){
             this.shelf.addLast(temp.get(i));
          }
-         count = 2 * right + 1;
+         count = MUTATORS_PER_BOOK_MOVED * numToMoveFromBack + TARGET_BOOK_OPERATION;
       }
       this.totalOperations += count;
       lastPickOrPutOperations = count;
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       return count;
    }
 
@@ -148,7 +150,7 @@ public class BookshelfKeeper {
     * that have been requested up to now.
     */
    public int getTotalOperations() {
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       return totalOperations;
    }
 
@@ -156,7 +158,7 @@ public class BookshelfKeeper {
     * Returns the number of books on the contained bookshelf.
     */
    public int getNumBooks() {
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       return this.shelf.size();
    }
 
@@ -170,7 +172,7 @@ public class BookshelfKeeper {
     * 
     */
    public String toString() {
-      isValidBookshelfKeeper();
+      assert isValidBookshelfKeeper();
       StringBuilder sb = new StringBuilder();
       sb.append("[");
       for(int i = 0; i < getNumBooks(); i++){
